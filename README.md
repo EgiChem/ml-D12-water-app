@@ -20,17 +20,22 @@ Note: the molar refractivity parameter (MolMR) can be computed from a molecular 
 
 ## Installation
 
-Create a `conda` virtual environment using the provided `environment.yml` file:
+1. Download this repository by clicking `Code` > `Download ZIP`. Unzip the folder.
 
-```
-$ conda env create -f environment.yml
-$ conda activate ml-water
-```
+2. Install Python. We recommend a installing the [Anaconda Distribution](https://www.anaconda.com/download) or [Miniconda](https://docs.conda.io/projects/miniconda/en/latest/miniconda-install.html).
+
+3. Open the Anaconda Prompt and change the directory to where you extracted the repository files: `cd path/to/folder`.
+
+3. Create a `conda` virtual environment using the provided `environment.yml` file: `conda env create -f environment.yml`
+
+4. Activate the environment with: `conda activate ml-water`.
+
+5. You can now use the models following instructions bellow either in a `.py` script file or in a Jupyter Notebook (already provided in the environment by running `jupyter lab`).
 
 
 ## Usage
 
-To use the `ML-T-RDKit`:
+To use the `ML-Prop-4` model:
 
 ```python
 from ml_D12_water import ML_Prop_4
@@ -41,5 +46,20 @@ model.predict(temp=313, visc=0.6548, crit_vol=93.9, diam_lj=3.26)
 # Output: array([2.77346518e-05])
 ```
 
-More usage examples are provided in the [`examples.ipynb`](examples.ipynb) file.
+To use the `ML-T-RDKit` model for two conditions/solutes:
 
+```python
+from ml_D12_water import ML_T_RDKit
+
+model = ML_T_RDKit()
+
+model.predict(
+    temp=[313, 303.2], 
+    smiles=['C(=O)=O', 'O=CC1=CC=C(O)C(OC)=C1']  # CO2 and vanilin
+)
+# Output: array([2.81059139e-05, 1.01639130e-05])
+```
+
+The outputed D12 values are in cm2/s.
+
+More usage examples are provided in the [`examples.ipynb`](examples.ipynb) file.
