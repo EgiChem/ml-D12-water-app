@@ -27,12 +27,12 @@ class ML_T_RDKit:
         self.data = None
         self.model_pipeline = joblib.load(f'models/{ML_T_RDKit.MODEL}-pipeline.mod')
 
-    def get_RDKit_descriptors(self):
+    def _get_RDKit_descriptors(self):
         from rdkit import Chem
         from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
 
         # Add RDKit mol objects
-        df['mol'] = [Chem.MolFromSmiles(smi) for smi in self.data_df['canonical_smiles'].to_list()]
+        self.data_df['mol'] = [Chem.MolFromSmiles(smi) for smi in self.data_df['canonical_smiles'].to_list()]
 
         # Compute descriptors
         generator = MakeGenerator(('RDKit2D',))
@@ -44,7 +44,7 @@ class ML_T_RDKit:
 
         # Merge descriptors with the main df
         df_rdkit2d = df_rdkit2d.reset_index()
-        df_all_rdkit2d = df.merge(df_rdkit2d, on='canonical_smiles')
+        df_all_rdkit2d = self.data_df.merge(df_rdkit2d, on='canonical_smiles')
 
         # Remove irrelevant columns
         df_all_rdkit2d = df_all_rdkit2d.drop(columns=['canonical_smiles', 'mol'])
@@ -58,5 +58,5 @@ class ML_T_RDKit:
             'canonical_smiles': smiles,
         }
         self.data_df = pd.DataFrame.from_dict(data_dict)
-        data_descriptors_df = self.get_RDKit_descriptors()
+        data_descriptors_df = self._get_RDKit_descriptors()
         return self.model_pipeline.predict(data_descriptors_df)
