@@ -140,3 +140,43 @@ class ML_T_MACCS:
         self.data_df = pd.DataFrame.from_dict(data_dict)
         data_descriptors_df = self._get_RDKit_descriptors()
         return self.model_pipeline.predict(data_descriptors_df)
+
+
+class ML_T_ECFP6:
+    MODEL = 'ML-T-ECFP6'
+
+    def __init__(self):
+        self.model_pipeline = joblib.load(f'models/{ML_T_ECFP6.MODEL}-pipeline.mod')
+
+    def _get_RDKit_descriptors(self):
+        from rdkit import Chem
+        from rdkit.Chem import AllChem
+
+        # Add RDKit mol objects
+        self.data_df['mol'] = [Chem.MolFromSmiles(smi) for smi in self.data_df['canonical_smiles'].to_list()]
+
+        # Compute ECFP6
+        radius = 3
+        nBits = 1024
+        ECFP6 = [AllChem.GetMorganFingerprintAsBitVect(x, radius=radius, nBits=nBits) for x in self.data_df['mol']]
+        ecfp6_name = [f'ecfp6_{i}' for i in range(nBits)]
+        ecfp6_bits = [list(l) for l in ECFP6]
+        df_morgan = pd.DataFrame(ecfp6_bits, index=self.data_df.canonical_smiles, columns=ecfp6_name)
+
+        # Merge descriptors with the main df
+        df_morgan = df_morgan.reset_index()
+        df_all_morgan = self.data_df.merge(df_morgan, on='canonical_smiles')
+
+        # Remove irrelevant columns
+        df_all_morgan = df_all_morgan.drop(columns=['canonical_smiles', 'mol'])
+        
+        return df_all_morgan
+
+    def predict(self, temp=None, smiles=None):
+        data_dict = {
+            'T': temp,
+            'canonical_smiles': smiles,
+        }
+        self.data_df = pd.DataFrame.from_dict(data_dict)
+        data_descriptors_df = self._get_RDKit_descriptors()
+        return self.model_pipeline.predict(data_descriptors_df)
