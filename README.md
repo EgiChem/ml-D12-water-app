@@ -2,6 +2,8 @@
 
 Prediction of binary diffusivities at infinite dilution of any solute in water at atmospheric pressure.
 
+For more information see our paper: [Aniceto et al., 2024, Journal of Molecular Liquids](https://doi.org/10.1016/j.molliq.2024.125009)
+
 ## Available models
 
 The models in the Table below are ranked from better performance to worse. The AARD achieved by the models in the test set ranges from 3.92 to 5.48 %.
@@ -63,3 +65,10 @@ model.predict(
 The outputed D12 values are in cm2/s.
 
 More usage examples are provided in the [`examples.ipynb`](examples.ipynb) file.
+
+
+## Citing
+
+If these models are useful to you, please cite the following publication:
+
+[J.P.S. Aniceto, B. Zêzere, and C.M. Silva, Prediction of diffusion coefficients in aqueous systems by machine learning models, Journal of Molecular Liquids, 405, 125009, 2024, DOI: 10.1016/j.molliq.2024.125009.](https://doi.org/10.1016/j.molliq.2024.125009)
